@@ -1,0 +1,53 @@
+# Regras determinísticas — lidas em runtime pelo PolicyEngine
+# Mudar uma regra = editar este arquivo, sem redeployar código
+
+global:
+  dry_run: true                  # false em producao
+  circuit_breaker:
+    max_actions_per_hour: 10
+    cooldown_minutes: 15
+
+thresholds:
+  idle:
+    util_pct_below: 15           # abaixo disso = candidato a idle
+    duration_minutes: 30         # por pelo menos este tempo
+    score_auto_act: 0.85         # score >= age sozinho sem LLM
+    score_llm: 0.50              # score entre 0.50 e 0.84 = chama LLM
+  vram_anomaly:
+    util_pct_above: 95           # VRAM acima disso = anomalia
+    duration_minutes: 10
+  cost_alert_usd_per_hour: 2.50
+
+gpu_cost:
+  usd_per_hour:
+    default: 2.50
+    a100: 4.10
+    v100: 2.48
+    t4: 0.68
+    mock: 1.00
+
+teams:
+  - name: ml-research
+    namespace: ml-research
+    allow_auto_pause: true       # permite pausa automatica
+    exempt_hours: "22:00-08:00"
+    notify_slack: "#ml-research-alerts"
+  - name: data-eng
+    namespace: data-engineering
+    allow_auto_pause: false      # so recomenda, nunca pausa
+    notify_slack: "#data-eng-alerts"
+  - name: platform
+    namespace: platform
+    allow_auto_pause: true
+    notify_slack: "#platform-alerts"
+
+actions:
+  pause_job:
+    requires_approval_above_cost_usd: 50
+    max_per_hour: 5
+  scale_down:
+    requires_approval: true      # sempre precisa de humano
+  recommend:
+    requires_approval: false
+  noop:
+    requires_approval: false

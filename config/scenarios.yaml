@@ -1,0 +1,43 @@
+# Dados simulados para MockBackend e Custom Collector Prometheus
+# Cada job cobre um caminho diferente do PolicyEngine
+
+jobs:
+  job-train-resnet:
+    namespace: ml-research
+    gpu_type: a100
+    util_pct: 4.0
+    vram_pct: 18.0
+    duration_minutes: 95
+    gpu_count: 2
+
+  job-inference-api:
+    namespace: platform
+    gpu_type: t4
+    util_pct: 72.0
+    vram_pct: 61.0
+    duration_minutes: 480
+    gpu_count: 1
+
+  job-batch-embeddings:
+    namespace: data-engineering
+    gpu_type: v100
+    util_pct: 13.0
+    vram_pct: 44.0
+    duration_minutes: 38
+    gpu_count: 4
+
+  job-finetune-llm:
+    namespace: ml-research
+    gpu_type: a100
+    util_pct: 97.0
+    vram_pct: 98.5
+    duration_minutes: 22
+    gpu_count: 8
+
+  job-experiment-42:
+    namespace: ml-research
+    gpu_type: t4
+    util_pct: 2.0
+    vram_pct: 5.0
+    duration_minutes: 210
+    gpu_count: 1
